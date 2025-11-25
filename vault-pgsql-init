@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+
+POSTGRES_USER=postgres
+
+psql -U $POSTGRES_USER <<HERE
+CREATE DATABASE "$PGSQL_VAULT_DB";
+
+CREATE USER "$PGSQL_VAULT_USER" WITH LOGIN PASSWORD '$PGSQL_VAULT_PASS';
+
+\c "$PGSQL_VAULT_DB";
+
+CREATE TABLE vault_kv_store (
+  parent_path TEXT COLLATE "C" NOT NULL,
+  path        TEXT COLLATE "C",
+  key         TEXT COLLATE "C",
+  value       BYTEA,
+  CONSTRAINT pkey PRIMARY KEY (path, key)
+);
+
+CREATE INDEX parent_path_idx ON vault_kv_store (parent_path);
+
+CREATE TABLE vault_ha_locks (
+  ha_key      TEXT COLLATE "C" NOT NULL,
+  ha_identity TEXT COLLATE "C" NOT NULL,
+  ha_value    TEXT COLLATE "C",
+  valid_until TIMESTAMP WITH TIME ZONE NOT NULL,
+  CONSTRAINT ha_key PRIMARY KEY (ha_key)
+);
+
+GRANT ALL PRIVILEGES ON DATABASE "$PGSQL_VAULT_DB" TO "$PGSQL_VAULT_USER";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "$PGSQL_VAULT_USER";
+HERE
