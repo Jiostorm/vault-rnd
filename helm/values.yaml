@@ -6,6 +6,9 @@ global:
   # TLS for end-to-end encrypted transport
   tlsDisable: true
 
+injector:
+  enabled: false
+
 server:
   # If true, or "-" with global.enabled true, Vault server will be installed.
   # See vault.mode in _helpers.tpl for implementation details.
