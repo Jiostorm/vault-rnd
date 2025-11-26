@@ -9,15 +9,15 @@ services:
     cap_add:
       - "IPC_LOCK"
     env_file: .env
-    command: >
+    command: >-
       /bin/sh -c "apk add envsubst && \
-                  envsubst < /config.raw.hcl > /vault/config/config.hcl && \
-                  vault server -config=/vault/config/config.hcl"
+                  envsubst < /storage.raw.hcl > /vault/config/storage.hcl && \
+                  vault server -config=/vault/config/"
     ports:
       - 8200-8201:8200
     volumes:
-      - ./config.hcl:/config.raw.hcl
-      - ./vault/data:/vault/data
+      - ./storage.hcl:/storage.raw.hcl:ro
+      - ./config.hcl:/vault/config/config.hcl:ro
       - ./vault/logs:/vault/logs
   pgsqldb:
     image: postgres:18.1-alpine3.22
