@@ -36,52 +36,116 @@
 # Vault Setup
 ## Server
 ### Starting Vault Server
-- `vault server -config=/path/to/config.hcl`
+```sh
+vault server -config=/path/to/config.hcl
+```
 
 ### Initializing Vault Operator
-- `vault operator init`
+```sh
+vault operator init
+```
 
 ### Unseal Vault
 > [!NOTE]
 > Vault by default has an unseal key threshold of 3 only from 5 unseal keys
-- `vault operator unseal`
+```sh
+vault operator unseal
+```
 
-### Logging-in to Vault
+### Logging-in to Vault using _root_ token
 > [!TIP]
 > Or set `VAULT_TOKEN` environment variable to bypass login
-- `vault login -method=token`
+```sh
+vault login -method=token
+```
+
+### Logging-in to Vault using _userpass_
+```sh
+vault login \
+    -method=userpass \
+    -path="<custom-auth-path>" \
+    username="<username>"
+```
 
 
 ## Secrets
 ### Enable _KV(Key-Value) v2_ engine
-- `vault secrets enable -path="<custom-path>" -description="<description>" kv-v2`
+```sh
+vault secrets enable \
+    -path="<custom-path>" \
+    -description="<description>" \
+    kv-v2
+```
 
 ### Writing a secret to KV v2
 > [!NOTE]
 > KV-v2 secrets engine inserts an additional path to secrets @ `/<custom-path>/data/<secret-name>`
-- `vault kv put -mount="<custom-path>" -field="<optional-field>" <secret-name>`
+```sh
+vault kv put \
+    -mount="<custom-path>" \
+    -field="<optional-field>" \
+    <secret-name>
+```
 
 
 ## Policy
 ### Writing a policy
 > [!TIP]
 > Piping the contents of a file or using _heredoc_ is permitted for `write` command, via asserting `stdin` using `-`
-- `vault policy write <policy-name> <filepath>`
+```sh
+vault policy write <policy-name> <filepath>
+```
 
 
 ## Auths
 ### Enable _userpass_ auth
-- `vault auth enable -path="<custom-path>" -description="<description>" userpass`
+```sh
+vault auth enable \
+    -path="<custom-path>" \
+    -description="<description>" \
+    -default-lease-ttl="1h"
+    -max-lease-ttl="12h"
+    userpass
+```
 
 ### Writing a _userpass_ auth
-- `vault write auth/<custom-path>/users/<username> password="<password>" token_policies="<policy>"`
+```sh
+vault write auth/<custom-path>/users/<username> \
+    password="<password>" \
+    token_policies="<policy>"
+```
 
 
 ## Audit
 ### Enable _file_ audit device
-- `vault audit enable -path="<custom-path>" -description="<description>" file file_path="<storage-path>"`
+```sh
+vault audit enable \
+    -path="<custom-path>" \
+    -description="<description>" \
+    file \
+    file_path="<storage-path>"
+```
 
 > [!TIP]
 > Streaming audit logs to _stdout_ is also possible by setting `file_path=stdout` and
 > log prefixing is recommended for easy filtering of audit logs from server logs
-- `vault audit enable -path="<custom-path>" -description="<description>" file file_path="stdout" -prefix="<custom-prefix>"`
+```sh
+vault audit enable \
+    -path="<custom-path>" \
+    -description="<description>" \
+    file \
+    file_path="stdout" \
+    prefix="<custom-prefix>"
+```
+
+> [!TIP]
+> Streaming audit logs to a log file is also desired with streaming to _stdout_ for better logging capability
+```sh
+vault audit enable \
+    -path="<custom-path>" \
+    -description="<description>" \
+    file \
+    file_path="<audit-log-path>" \
+    hmac_accessor=false \
+    elide_list_responses=true
+```
