@@ -1,4 +1,4 @@
-# Vault Command Guide
+# Vault Guide
 ## Vault Core Commands
 - `secrets` <`list`|`enable`|`disable`|`tune`>
     - options:
@@ -83,8 +83,10 @@ vault secrets enable \
 ```sh
 vault kv put \
     -mount="<custom-path>" \
-    -field="<optional-field>" \
-    <secret-name>
+    <secret-name> \
+    <field-1>=<value-1> \
+    <field-2>=<value-2>
+    
 ```
 
 
@@ -103,8 +105,8 @@ vault policy write <policy-name> <filepath>
 vault auth enable \
     -path="<custom-path>" \
     -description="<description>" \
-    -default-lease-ttl="1h"
-    -max-lease-ttl="12h"
+    -default-lease-ttl="1h" \
+    -max-lease-ttl="12h" \
     userpass
 ```
 
