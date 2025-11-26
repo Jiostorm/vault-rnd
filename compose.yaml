@@ -1,7 +1,9 @@
 services:
   vault:
     image: hashicorp/vault:latest
-    container_name: vault
+    deploy:
+      mode: replicated
+      replicas: 2
     depends_on:
       - pgsqldb
     cap_add:
@@ -12,7 +14,7 @@ services:
                   envsubst < /config.raw.hcl > /vault/config/config.hcl && \
                   vault server -config=/vault/config/config.hcl"
     ports:
-      - 8200:8200
+      - 8200-8201:8200
     volumes:
       - ./config.hcl:/config.raw.hcl
       - ./vault/data:/vault/data
