@@ -37,7 +37,7 @@
 ## Server
 ### Starting Vault Server
 ```sh
-vault server -config=/path/to/config.hcl
+vault server -config=</path/to/config.hcl>
 ```
 
 ### Initializing Vault Operator
@@ -99,8 +99,9 @@ vault policy write <policy-name> <filepath>
 ```
 
 
-## Auths
-### Enable _userpass_ auth
+## Auth
+### _UserPass_
+#### Enable _userpass_ auth
 ```sh
 vault auth enable \
     -path="<custom-path>" \
@@ -110,11 +111,50 @@ vault auth enable \
     userpass
 ```
 
-### Writing a _userpass_ auth
+#### Writing a _userpass_ auth
 ```sh
 vault write auth/<custom-path>/users/<username> \
     password="<password>" \
     token_policies="<policy>"
+```
+
+### _JWT_
+#### Enable _jwt_ auth
+```sh
+vault auth enable \
+    -path="<custom-path>" \
+    -description="<description>" \
+    -default-lease-ttl="1h" \
+    -max-lease-ttl="12h" \
+    jwt
+```
+
+#### Writing a _jwt_ auth `config`
+```sh
+vault write auth/<custom-path>/config \
+    oidc_discovery_url="<oidc/jwt-url>" \
+    bound_issuer="<bound-audience-url>"
+```
+
+#### Writing a _jwt_ auth role
+```sh
+vault write auth/<custom-path>/role/<role-name> - <<-HERE
+{
+  "bound_audiences": "$REPO_URL",
+  "bound_claims_type": "glob",
+  "bound_claims": {
+    "project_id": "$PROJECT_ID",
+    "ref_type": "*",
+    "ref": "*"
+  },
+  "role_type": "jwt",
+  "token_max_ttl": "2m",
+  "token_num_uses": 1,
+  "token_policies": ["${POLICY_PREFIX}-all"],
+  "token_ttl": "1m",
+  "token_type": "default",
+  "user_claim": "user_email"
+HERE
 ```
 
 
