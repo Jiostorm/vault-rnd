@@ -1,0 +1,16 @@
+{
+  "bound_audiences": "$REPO_URL",
+  "bound_claims_type": "glob",
+  "bound_claims": {
+    "project_id": "$PROJECT_ID",
+    "ref_type": "branch",
+    "ref": "review"
+  },
+  "role_type": "jwt",
+  "token_max_ttl": "2m",
+  "token_num_uses": 1,
+  "token_policies": ["${POLICY_PREFIX}-review"],
+  "token_ttl": "1m",
+  "token_type": "default",
+  "user_claim": "user_email"
+}
