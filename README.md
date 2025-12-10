@@ -191,3 +191,7 @@ vault audit enable \
     hmac_accessor=false \
     elide_list_responses=true
 ```
+
+# References
+
+[Official Hashicorp Vault](https://developer.hashicorp.com/vault/docs)
