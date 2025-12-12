@@ -192,6 +192,22 @@ vault audit enable \
     elide_list_responses=true
 ```
 
+
+## Token
+### Creating `least-privileged`, `orphan`, `periodic`, and `renewable` token
+```sh
+vault token create \
+    -type="<service|batch>" \
+    -display-name="<name>" \
+    -no-default-policy=true \
+    -policy="<policy-x>" \
+    -policy="<policy-y>" \
+    -orphan=true \
+    -period="1h" \
+    -renewable=true
+```
+
+
 # References
 
 [Official Hashicorp Vault](https://developer.hashicorp.com/vault/docs)
