@@ -154,6 +154,7 @@ vault write auth/<custom-path>/role/<role-name> - <<-HERE
   "token_ttl": "1m",
   "token_type": "default",
   "user_claim": "user_email"
+}
 HERE
 ```
 
