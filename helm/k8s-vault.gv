@@ -1,0 +1,39 @@
+digraph "k8s.vault.integration" {
+    rankdir = "TB";
+    splines = "ortho";
+    node[shape = "rect"]
+    
+    newrank = true;
+    subgraph "cluster_staging.cloud" {
+        label = "Staging Cluster";
+        margin = 50;
+        "staging.cloud.t2.ns" [label = "T2 - Test Namespace"];
+        "staging.cloud.t2.secret" [label = "Secret"];
+        "staging.cloud.t2.external_secret" [label = "External Secret"];
+        "staging.cloud.t2.external_secret_store" [label = "External Secret Store"];
+        "staging.cloud.t2.external_secret_store_operator" [label = "External Secret Store Operator"];
+    }
+    subgraph "cluster_vault.cloud" {
+        label = "Vault Cluster";
+        margin = 50;
+        "vault.cloud.active" [label = "Vault Active Service"];
+        "vault.cloud.replica.1" [label = "Vault Replica 1"];
+        "vault.cloud.replica.2" [label = "Vault Replica 2"];
+        "vault.cloud.backend" [label = "PostgreSQL Backend"];
+    }
+    
+    { rank=same; "staging.cloud.t2.external_secret_store"; "vault.cloud.active"; }
+    
+    "vault.cloud.active" -> "vault.cloud.replica.1";
+    "vault.cloud.active" -> "vault.cloud.replica.2";
+    "vault.cloud.replica.1" -> "vault.cloud.backend";
+    "vault.cloud.replica.2" -> "vault.cloud.backend";
+    
+    "staging.cloud.t2.external_secret_store_operator" -> "staging.cloud.t2.external_secret_store";
+    "staging.cloud.t2.external_secret_store" -> "staging.cloud.t2.external_secret";
+
+    "staging.cloud.t2.external_secret_store" -> "vault.cloud.active";
+
+    "staging.cloud.t2.external_secret" -> "staging.cloud.t2.secret";
+    "staging.cloud.t2.secret" -> "staging.cloud.t2.ns";
+}
