@@ -1,0 +1,15 @@
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: vault
+spec:
+  provider:
+    vault:
+      server: http://vault-active.vault.svc.cluster.local:8200
+      path: ${SECRET_PATH}
+      version: v2
+      auth:
+        tokenSecretRef:
+          name: ${VAULT_SECRET_AUTH_TOKEN}
+          namespace: ${NAMESPACE}
+          key: token

@@ -1,0 +1,19 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: generic
+spec:
+  refreshPolicy: Periodic
+  refreshInterval: 15s
+  secretStoreRef:
+    name: vault
+    kind: ClusterSecretStore
+  target:
+    name: generic-secrets
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: SUPER_SECRET
+      remoteRef:
+        key: generic
+        property: SUPER_SECRET
