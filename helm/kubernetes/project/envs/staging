@@ -1,0 +1,5 @@
+DB_HOST=111.110.101.100
+DB_USER=staging_user
+DB_PASS=pass
+DB_PORT=69420
+ENV=production
