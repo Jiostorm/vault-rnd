@@ -200,7 +200,7 @@ vault audit enable \
 vault token create \
     -type="<service|batch>" \
     -display-name="<name>" \
-    -no-default-policy=true \
+    -no-default-policy=false \
     -policy="<policy-x>" \
     -policy="<policy-y>" \
     -orphan=true \
@@ -208,6 +208,20 @@ vault token create \
     -renewable=true
 ```
 
+> [!TIP]
+> Listing of all tokens by its accessor
+```sh
+vault list \
+    -format=<json|yaml> \
+    auth/token/accessor
+```
+
+> [!TIP]
+> Revoking a token by its accessor
+```sh
+vault token revoke \
+    -accessor=<token-accessor>
+```
 
 # References
 
