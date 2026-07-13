@@ -1,0 +1,59 @@
+digraph "gitlab.vault.integration" {
+    rankdir = "TB";
+    splines = "ortho";
+    node[shape = "rect"]
+
+    newrank = true;
+    subgraph "cluster_utilities.cloud" {
+        label = "Utilities Cluster";
+        margin = 50;
+
+        "utilities.cloud.istio_namespace" [label = "Istio-Injected Namespace"];
+        "utilities.cloud.istio_gitlab_runner" [label = "Istio Gitlab Runner"];
+        "utilities.cloud.istio_gitlab_runner.build" [label = "Build Pod"];
+        "utilities.cloud.istio_gitlab_runner.job" [label = "Job Pod"];
+    }
+    subgraph "cluster_istio.cloud" {
+        label = "Istio Cluster";
+        margin = 50;
+        "istio.cloud.istiod" [label = "Istiod Control Plane"];
+        "istio.cloud.eastwest" [label = "EastWest Gateway"];
+    }
+    subgraph "cluster_vault.cloud" {
+        label = "Vault Cluster";
+        margin = 50;
+        "vault.cloud.ui_api" [label = "Vault UI/API"];
+        "vault.cloud.active" [label = "Vault Active Service"];
+        "vault.cloud.replica.1" [label = "Vault Replica 1"];
+        "vault.cloud.replica.2" [label = "Vault Replica 2"];
+        "vault.cloud.backend" [label = "PostgreSQL Backend"];
+    }
+
+    { rank=same; "utilities.cloud.istio_gitlab_runner"; "istio.cloud.eastwest"; "vault.cloud.active"; }
+
+    // Alignment
+    "utilities.cloud.istio_gitlab_runner" -> "istio.cloud.eastwest" [style = "invis"];
+    "istio.cloud.eastwest" -> "vault.cloud.active" [style = "invis"];
+
+    // Utilities
+    "utilities.cloud.istio_namespace" -> "utilities.cloud.istio_gitlab_runner";
+    "utilities.cloud.istio_gitlab_runner" -> "utilities.cloud.istio_gitlab_runner.build";
+    "utilities.cloud.istio_gitlab_runner.build" -> "utilities.cloud.istio_gitlab_runner.job";
+
+    // Istio
+    "istio.cloud.istiod" -> "istio.cloud.eastwest";
+    "istio.cloud.eastwest" -> "istio.cloud.istiod";
+
+    // Vault
+    "vault.cloud.ui_api" -> "vault.cloud.active";
+    "vault.cloud.active" -> "vault.cloud.replica.1";
+    "vault.cloud.active" -> "vault.cloud.replica.2";
+    "vault.cloud.replica.1" -> "vault.cloud.backend";
+    "vault.cloud.replica.2" -> "vault.cloud.backend";
+
+    // Connections
+    "istio.cloud.eastwest" -> "utilities.cloud.istio_gitlab_runner";
+    "utilities.cloud.istio_gitlab_runner" -> "istio.cloud.eastwest";
+    "istio.cloud.eastwest" -> "vault.cloud.active";
+    "vault.cloud.active" -> "istio.cloud.eastwest";
+}
