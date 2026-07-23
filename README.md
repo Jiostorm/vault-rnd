@@ -213,7 +213,7 @@ vault token create \
 ```sh
 vault list \
     -format=<json|yaml> \
-    auth/token/accessor
+    auth/token/accessors
 ```
 
 > [!TIP]
